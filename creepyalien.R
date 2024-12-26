@@ -110,21 +110,22 @@ run <- function() {
   chr_Z <- "  " ## " "
   chr_R <- "\U1F680"
   
-  Y <- "*"
-  B <- "+"
-  C <- "O" 
-  D <- ":"
-  E <- "X"
-  Z <- " "
-  R <- ">"
+  Y <- "*"  # alien
+  B <- "+"  # grave
+  C <- "O"  # hole
+  D <- ":"  # wall
+  E <- "X"  # enemy
+  Z <- " "  # space
+  R <- ">"  # rocket
   
   
   ## Draw board
   ## Add borders
-  A[c(1, 10), ] <- D
-  A[, 1] <- D
-  A[1:8, 20] <- D
-  A[9, 20] <- R
+  A[c(1, 10), ] <- D  # top & bottom wall
+  A[, 1] <- D         # left wall
+  A[1:8, 20] <- D     # right wall
+  A[9, 20] <- R       # rocket
+  
   ## Add graves
   for (i in 1:20){
     A[floor(runif(1) * 7 + 2), floor(runif(1) * 15 + 3)] <- B
