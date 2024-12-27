@@ -5,6 +5,7 @@
 # cat("\U1F480")  ## 💀
 # cat("\U1F47D")  ## 👽
 # cat("\U1F680")  ## 🚀
+# cat("\U1F6F8")  ## 🛸
 # cat("\U1F47B")  ## 👻
 # cat("\U1F477")  ## 👷 
 # cat("\U1F546")  🕆
@@ -46,15 +47,16 @@ start_screen <- function() {
   
   str <- paste0(
     paste(rep("\U1F480", 20), collapse = ""), "\n",
-    "           C R E E P Y \U1F47D A L I E N  ", "\n",
-    paste(rep("\U1F480", 20), collapse = ""), "\n",
     "\n",
-    "    Help the alien to find his rocket\n",
+    "           C R E E P Y \U1F47D A L I E N  ", "\n",
+    "\n",
+    "     Help the alien to find his ship \U1F6F8\n",
     "         Beware of the skeletons!\n",
     "\n",
     "  Inspired by 'Gravedigger', written 1983\n",
-    "      by Alan Ramsay for ZXSpectrum\n",
-    "                   \n"
+    "\n",
+    paste(rep("\U1F480", 20), collapse = ""), "\n",
+    "\n"
   )
   
   cat("\014")  ## clear screene
@@ -70,7 +72,7 @@ help_screen <- function() {
   str <- paste0(
     paste(rep("\U1F480", 20), collapse = ""), "\n",
     "You are an alien lost in a graveyard and have \n", 
-    "until midnight to find your way to your rocket\n", 
+    "until midnight to find your way to your ship\n", 
     "Skeletons are waiting to scare you to death  \n",
     "should you come to close. You can dig up to 5\n", 
     "holes to help keep them away. And do not fall\n",
@@ -87,6 +89,63 @@ help_screen <- function() {
   inp
 }
 
+refresh_screen <- function(A) {
+  
+  ## define symbols
+  Y <- "*"  # alien
+  B <- "+"  # grave
+  C <- "O"  # hole
+  D <- ":"  # wall
+  E <- "X"  # enemy
+  Z <- " "  # space
+  R <- ">"  # rocket
+  
+  ## Initiate pieces
+  chr_Y <- "\U1F47D" # "\U1F477" # "*"
+  chr_B <- "_+"      # "+"
+  chr_C <- "()"      # "O" 
+  chr_D <- "::"      # ":"
+  chr_E <- "\U1F480" # "X"
+  chr_Z <- "  "      # " "
+  chr_R <- "\U1F6F8"
+  
+  ## Print board
+  cat("\014")  ## clear screene
+  v <- paste(as.vector(t(A)), collapse = "")        
+  for (i in 1:10) {
+    str <- substr(v, (i - 1) * 20 + 1, (i - 1) * 20 + 20)
+    str_chr <- vector()
+    for (ii in 1:20) {
+      if (substr(str, ii, ii) == Y) { str_chr <- c(str_chr, chr_Y) }
+      if (substr(str, ii, ii) == B) { str_chr <- c(str_chr, chr_B) }
+      if (substr(str, ii, ii) == C) { str_chr <- c(str_chr, chr_C) }
+      if (substr(str, ii, ii) == D) { str_chr <- c(str_chr, chr_D) }
+      if (substr(str, ii, ii) == E) { str_chr <- c(str_chr, chr_E) }
+      if (substr(str, ii, ii) == Z) { str_chr <- c(str_chr, chr_Z) }
+      if (substr(str, ii, ii) == R) { str_chr <- c(str_chr, chr_R) }
+    }
+    cat(paste0(str_chr, collapse = ""), "\n")
+  }
+  
+}
+
+fly_ufo <- function(A)  {
+  
+  ## Alien enters ufo
+  A[9,19] <- " "
+  refresh_screen(A)
+  Sys.sleep(1)
+  
+  ## Alien flies away
+  for(i in 1:9)  {
+    
+    A[10-i, 20] <- ":"  
+    A[10-i-1, 20] <- ">"
+    refresh_screen(A)
+    Sys.sleep(0.5)
+  }
+  
+}
 
 run <- function() {
   
@@ -101,15 +160,7 @@ run <- function() {
   X <- 5 # Remaining holes
   death <- 0 # Game over?
   
-  ## Initiate pieces
-  chr_Y <- "\U1F47D" # "\U1F477" ## "*"
-  chr_B <- "_+" ## "+"
-  chr_C <- "()" ## "O" 
-  chr_D <- "::" ## ":"
-  chr_E <- "\U1F480" ## "X"
-  chr_Z <- "  " ## " "
-  chr_R <- "\U1F680"
-  
+  ## define symbols
   Y <- "*"  # alien
   B <- "+"  # grave
   C <- "O"  # hole
@@ -117,7 +168,6 @@ run <- function() {
   E <- "X"  # enemy
   Z <- " "  # space
   R <- ">"  # rocket
-  
   
   ## Draw board
   ## Add borders
@@ -140,6 +190,8 @@ run <- function() {
   S <- c(4, 19, 3, 19, 2, 19)
   last_command <- ""
   
+  beepr::beep(6)
+  
   ## Game play
   repeat{    
     ## Position skeletons
@@ -152,23 +204,9 @@ run <- function() {
       print("Aghhhhh!!!!")
       break
     }
-    ## Print board
-    cat("\014")  ## clear screene
-    v <- paste(as.vector(t(A)), collapse = "")        
-    for (i in 1:10) {
-      str <- substr(v, (i - 1) * 20 + 1, (i - 1) * 20 + 20)
-      str_chr <- vector()
-      for (ii in 1:20) {
-        if (substr(str, ii, ii) == Y) { str_chr <- c(str_chr, chr_Y) }
-        if (substr(str, ii, ii) == B) { str_chr <- c(str_chr, chr_B) }
-        if (substr(str, ii, ii) == C) { str_chr <- c(str_chr, chr_C) }
-        if (substr(str, ii, ii) == D) { str_chr <- c(str_chr, chr_D) }
-        if (substr(str, ii, ii) == E) { str_chr <- c(str_chr, chr_E) }
-        if (substr(str, ii, ii) == Z) { str_chr <- c(str_chr, chr_Z) }
-        if (substr(str, ii, ii) == R) { str_chr <- c(str_chr, chr_R) }
-      }
-      cat(paste0(str_chr, collapse = ""), "\n")
-    }
+    
+    refresh_screen(A)
+    
     ## Enter move
     A1 <- toupper(readline(paste0("Move ", W, ": Go [N],[S],[E],[W] or [Q]uit: ")))
     if (A1 == "") { 
@@ -207,9 +245,10 @@ run <- function() {
       death <- 1
     } else if (T == 9 & U == 20) { # Escaped
       beepr::beep(sound=3)
-      cat("You're free!\n")
+      cat("You made it!\n")
+      fly_ufo(A)
       cat(paste0("Your performance rating is ",
-                 floor((60 - W) / 60 * (96 + X)), "%"))
+                 floor((60 - W) / 60 * (96 + X)), "%"), "\n")
       break
     } else if (death == 1) {
       beepr::beep(sound=9)
