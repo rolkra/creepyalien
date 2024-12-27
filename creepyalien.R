@@ -43,24 +43,73 @@ stop_quietly <- function() {
   stop()
 }
 
+clear_screen <- function() {  
+  cat("\014") 
+}
+
+def_character <- function() {
+  
+  ## define character (internal)
+  chr <- list(
+    alien = "*",  # Y
+    grave = "+",  # B
+    hole  = "O",  # C
+    wall  = ":",  # D
+    enemy = "X",  # E
+    space = " ",  # Z
+    ship  = ">",  # R
+    owl   = "B"   
+  )
+  
+  ## define screen symbol
+  sym <- list(
+    alien = "\U1F47D",  # chr_Y "*"  # "\U1F477" 
+    grave = "_+",       # chr_B "+"
+    hole  = "()",       # chr_C "O" 
+    wall  = "::",       # chr_D ":"
+    enemy = "\U1F480",  # chr_E "X"
+    space = "  ",       # chr_Z " "
+    ship  = "\U1F6F8",  # chr_R ">"
+    owl   = "\U1F989"
+  )
+  
+  def <- list(chr = chr, sym = sym)
+  def
+  
+} 
+
 start_screen <- function() { 
   
   str <- paste0(
     paste(rep("\U1F480", 20), collapse = ""), "\n",
     "\n",
-    "           C R E E P Y \U1F47D A L I E N  ", "\n",
-    "\n",
-    "     Help the alien to find his ship \U1F6F8\n",
-    "         Beware of the skeletons!\n",
-    "\n",
-    "  Inspired by 'Gravedigger', written 1983\n",
+    "          C R E E P Y {alien} A L I E N   \n",
+    "{ship}\n",
+    "     Help the alien to find his ship      \n",
+    "         Beware of the skeletons!         \n",
+    "                                          \n",
+    "  Inspired by 'Gravedigger', written 1983 \n",
     "\n",
     paste(rep("\U1F480", 20), collapse = ""), "\n",
     "\n"
   )
+  alien <- "  "
+  for (i in 0:22) {
+    clear_screen()
+    ship <- paste(rep(" ", i), collapse = "")
+    ship <- paste0(ship, "\U1F6F8")
+    cat(glue::glue(str))     ## show intro
+    Sys.sleep(0.05)
+  }
   
-  cat("\014")  ## clear screene
-  cat(str)     ## show intro
+  beepr::beep(5)
+  alien <- "\U1F47D"
+  clear_screen()
+  cat(glue::glue(str))     ## show intro
+  Sys.sleep(1)
+  clear_screen()
+  cat(cli::col_red(glue::glue(str)))     ## show intro
+
   inp <- readline("[S]tart | [H]elp | [Q]uit : ")
   inp <- toupper(inp)
   if (inp == "Q") { stop_quietly() }
@@ -71,18 +120,19 @@ help_screen <- function() {
   
   str <- paste0(
     paste(rep("\U1F480", 20), collapse = ""), "\n",
-    "You are an alien lost in a graveyard and have \n", 
-    "until midnight to find your way to your ship\n", 
-    "Skeletons are waiting to scare you to death  \n",
-    "should you come to close. You can dig up to 5\n", 
-    "holes to help keep them away. And do not fall\n",
-    "down the holes. Move [N]orth, [S]outh, [E]ast\n", 
-    "or [W]est. See if you can escape!            \n",
+    "You are an alien lost in a graveyard and  \n", 
+    "have until midnight to find your way to   \n", 
+    "your ship. Skeletons are waiting to scare \n",
+    "you to death should you come to close.    \n", 
+    "You can dig up to 5 holes to help keep    \n",
+    "them away. And do not fall down the holes.\n", 
+    "Move [N]orth, [S]outh, [E]ast or [W]est. \n",
+    "See if you can escape (in 60 moves)!\n",
     paste(rep("\U1F480", 20), collapse = ""), "\n"
   )
   
-  cat("\014")  ## clear screene
-  cat(str)     ## show intro
+  clear_screen()
+  cat(cli::col_red(str))     ## show intro
   inp <- readline("Press <ENTER> to start :")
   inp <- toupper(inp)
   if (inp == "Q") { stop_quietly() }
@@ -110,7 +160,7 @@ refresh_screen <- function(A) {
   chr_R <- "\U1F6F8"
   
   ## Print board
-  cat("\014")  ## clear screene
+  clear_screen()
   v <- paste(as.vector(t(A)), collapse = "")        
   for (i in 1:10) {
     str <- substr(v, (i - 1) * 20 + 1, (i - 1) * 20 + 20)
@@ -200,15 +250,15 @@ run <- function() {
     }
     W <- W + 1 ## Move counter
     if (W > 60) {
-      print("The clock's struck midnight")
-      print("Aghhhhh!!!!")
+      beepr::beep(sound=9)
+      cat("The clock's struck midnight\n")
       break
     }
     
     refresh_screen(A)
     
     ## Enter move
-    A1 <- toupper(readline(paste0("Move ", W, ": Go [N],[S],[E],[W] or [Q]uit: ")))
+    A1 <- toupper(readline(paste0("Moves ", 60-W+1, ": Go [N],[S],[E],[W] or [Q]uit: ")))
     if (A1 == "") { 
       A1 <- last_command
     } else {
@@ -245,10 +295,10 @@ run <- function() {
       death <- 1
     } else if (T == 9 & U == 20) { # Escaped
       beepr::beep(sound=3)
-      cat("You made it!\n")
       fly_ufo(A)
-      cat(paste0("Your performance rating is ",
-                 floor((60 - W) / 60 * (96 + X)), "%"), "\n")
+      #cat(paste0("Your performance rating is ",
+      #           floor((60 - W) / 60 * (96 + X)), "%"), "\n")
+      cat("Great, you made it!\n")
       break
     } else if (death == 1) {
       beepr::beep(sound=9)
