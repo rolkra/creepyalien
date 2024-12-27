@@ -43,8 +43,19 @@ stop_quietly <- function() {
   stop()
 }
 
-clear_screen <- function() {  
-  cat("\014") 
+clear_screen <- function(animate = TRUE) {  
+  if (animate) {
+    cat("\014")
+  } else {
+    cat("\n")
+  }
+}
+
+play_sound <- function(nr, sound = TRUE)  {
+  
+  if (sound) {
+     beepr::beep(sound = nr)
+  }
 }
 
 def_character <- function() {
@@ -78,10 +89,10 @@ def_character <- function() {
   
 } 
 
-start_screen <- function() { 
+start_screen <- function(def, animate = TRUE, sound = TRUE) { 
   
   str <- paste0(
-    paste(rep("\U1F480", 20), collapse = ""), "\n",
+    paste(rep(def$sym$enemy, 20), collapse = ""), "\n",
     "\n",
     "          C R E E P Y {alien} A L I E N   \n",
     "{ship}\n",
@@ -90,24 +101,29 @@ start_screen <- function() {
     "                                          \n",
     "  Inspired by 'Gravedigger', written 1983 \n",
     "\n",
-    paste(rep("\U1F480", 20), collapse = ""), "\n",
+    paste(rep(def$sym$enemy, 20), collapse = ""), "\n",
     "\n"
   )
-  alien <- "  "
-  for (i in 0:22) {
-    clear_screen()
-    ship <- paste(rep(" ", i), collapse = "")
-    ship <- paste0(ship, "\U1F6F8")
-    cat(glue::glue(str))     ## show intro
-    Sys.sleep(0.05)
-  }
   
-  beepr::beep(5)
-  alien <- "\U1F47D"
-  clear_screen()
-  cat(glue::glue(str))     ## show intro
-  Sys.sleep(1)
-  clear_screen()
+  if (animate) {
+    alien <- "  "
+    for (i in 0:22) {
+      clear_screen(animate)
+      ship <- paste(rep(" ", i), collapse = "")
+      ship <- paste0(ship, def$sym$ship)
+      cat(glue::glue(str))     ## show intro
+      Sys.sleep(0.05)
+    }
+    alien <- def$sym$alien
+    clear_screen(animate)
+    cat(glue::glue(str))     ## show intro
+    Sys.sleep(1)
+  }
+  play_sound(5, sound)
+  clear_screen(animate)
+  ship <- paste(rep(" ", 22), collapse = "")
+  ship <- paste0(ship, def$sym$ship)
+  alien <- def$sym$alien
   cat(cli::col_red(glue::glue(str)))     ## show intro
 
   inp <- readline("[S]tart | [H]elp | [Q]uit : ")
@@ -116,7 +132,7 @@ start_screen <- function() {
   inp
 }
 
-help_screen <- function() { 
+help_screen <- function(animate = TRUE, sound = TRUE) { 
   
   str <- paste0(
     paste(rep("\U1F480", 20), collapse = ""), "\n",
@@ -131,7 +147,7 @@ help_screen <- function() {
     paste(rep("\U1F480", 20), collapse = ""), "\n"
   )
   
-  clear_screen()
+  clear_screen(animate)
   cat(cli::col_red(str))     ## show intro
   inp <- readline("Press <ENTER> to start :")
   inp <- toupper(inp)
@@ -139,68 +155,62 @@ help_screen <- function() {
   inp
 }
 
-refresh_screen <- function(A) {
+refresh_screen <- function(A, def = def, animate = animate) {
   
   ## define symbols
-  Y <- "*"  # alien
-  B <- "+"  # grave
-  C <- "O"  # hole
-  D <- ":"  # wall
-  E <- "X"  # enemy
-  Z <- " "  # space
-  R <- ">"  # rocket
-  
-  ## Initiate pieces
-  chr_Y <- "\U1F47D" # "\U1F477" # "*"
-  chr_B <- "_+"      # "+"
-  chr_C <- "()"      # "O" 
-  chr_D <- "::"      # ":"
-  chr_E <- "\U1F480" # "X"
-  chr_Z <- "  "      # " "
-  chr_R <- "\U1F6F8"
+  # Y <- "*"  # alien
+  # B <- "+"  # grave
+  # C <- "O"  # hole
+  # D <- ":"  # wall
+  # E <- "X"  # enemy
+  # Z <- " "  # space
+  # R <- ">"  # rocket
   
   ## Print board
-  clear_screen()
+  clear_screen(animate)
   v <- paste(as.vector(t(A)), collapse = "")        
   for (i in 1:10) {
     str <- substr(v, (i - 1) * 20 + 1, (i - 1) * 20 + 20)
     str_chr <- vector()
     for (ii in 1:20) {
-      if (substr(str, ii, ii) == Y) { str_chr <- c(str_chr, chr_Y) }
-      if (substr(str, ii, ii) == B) { str_chr <- c(str_chr, chr_B) }
-      if (substr(str, ii, ii) == C) { str_chr <- c(str_chr, chr_C) }
-      if (substr(str, ii, ii) == D) { str_chr <- c(str_chr, chr_D) }
-      if (substr(str, ii, ii) == E) { str_chr <- c(str_chr, chr_E) }
-      if (substr(str, ii, ii) == Z) { str_chr <- c(str_chr, chr_Z) }
-      if (substr(str, ii, ii) == R) { str_chr <- c(str_chr, chr_R) }
+      if (substr(str, ii, ii) == def$chr$alien) { str_chr <- c(str_chr, def$sym$alien) }
+      if (substr(str, ii, ii) == def$chr$grave) { str_chr <- c(str_chr, def$sym$grave) }
+      if (substr(str, ii, ii) == def$chr$hole)  { str_chr <- c(str_chr, def$sym$hole) }
+      if (substr(str, ii, ii) == def$chr$wall)  { str_chr <- c(str_chr, def$sym$wall) }
+      if (substr(str, ii, ii) == def$chr$enemy) { str_chr <- c(str_chr, def$sym$enemy) }
+      if (substr(str, ii, ii) == def$chr$space) { str_chr <- c(str_chr, def$sym$space) }
+      if (substr(str, ii, ii) == def$chr$ship)  { str_chr <- c(str_chr, def$sym$ship) }
+      if (substr(str, ii, ii) == def$chr$owl)   { str_chr <- c(str_chr, def$sym$owl) }
     }
     cat(paste0(str_chr, collapse = ""), "\n")
   }
   
 }
 
-fly_ufo <- function(A)  {
+fly_ufo <- function(A, def, animate)  {
   
   ## Alien enters ufo
   A[9,19] <- " "
-  refresh_screen(A)
-  Sys.sleep(1)
+  refresh_screen(A, def, animate)
+  Sys.sleep(0.7)
   
   ## Alien flies away
   for(i in 1:9)  {
     
     A[10-i, 20] <- ":"  
     A[10-i-1, 20] <- ">"
-    refresh_screen(A)
+    refresh_screen(A, def, animate)
     Sys.sleep(0.5)
   }
   
 }
 
-run <- function() {
+run <- function(animate = TRUE, sound = TRUE) {
   
-  inp <- start_screen()
-  if (inp == "H") { help_screen() }
+  def <- def_character()
+  
+  inp <- start_screen(def, animate, sound)
+  if (inp == "H") { help_screen(animate, sound) }
   
   A <- matrix(ncol = 20, nrow = 10)
   A[, ] <- " "
@@ -240,7 +250,7 @@ run <- function() {
   S <- c(4, 19, 3, 19, 2, 19)
   last_command <- ""
   
-  beepr::beep(6)
+  play_sound(6, sound)
   
   ## Game play
   repeat{    
@@ -250,12 +260,12 @@ run <- function() {
     }
     W <- W + 1 ## Move counter
     if (W > 60) {
-      beepr::beep(sound=9)
+      play_sound(9, sound)
       cat("The clock's struck midnight\n")
       break
     }
     
-    refresh_screen(A)
+    refresh_screen(A, def, animate)
     
     ## Enter move
     A1 <- toupper(readline(paste0("Moves ", 60-W+1, ": Go [N],[S],[E],[W] or [Q]uit: ")))
@@ -285,30 +295,32 @@ run <- function() {
     if (A[T, U] == D | A[T, U] == B) { # Edge or grave
       
       cat("That way's blocked\n")
-      beepr::beep(sound=10)
+      play_sound(10, sound)
       Sys.sleep(1)
     } else if (A[T, U] == C) { # Hole
-      beepr::beep(sound=9)
+      play_sound(9, sound)
       cat("You've fallen into the hole\n")
       break
     } else if (A[T, U] == E) { # Skeleton
       death <- 1
     } else if (T == 9 & U == 20) { # Escaped
-      beepr::beep(sound=3)
-      fly_ufo(A)
+      play_sound(3, sound)
+      if (animate) {
+        fly_ufo(A, def, animate)
+      }
       #cat(paste0("Your performance rating is ",
       #           floor((60 - W) / 60 * (96 + X)), "%"), "\n")
       cat("Great, you made it!\n")
       break
     } else if (death == 1) {
-      beepr::beep(sound=9)
+      play_sound(9, sound)
       cat("You've been scared to death by a skeleton\n")
       break
     } else if (A[T, U] == Z) { # Player can move
       ## Move player and dig hole
       A [N, M] <- Z
       if (X != 0) {
-        B1 <- toupper(readline("Dig a hole Y or [N] : "))
+        B1 <- toupper(readline("Dig a hole [Y] or [N] : (Enter = N) "))
         if (B1 == "Y") {
           X <- X - 1
           A[N, M] <- C
