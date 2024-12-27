@@ -132,10 +132,10 @@ start_screen <- function(def, animate = TRUE, sound = TRUE) {
   inp
 }
 
-help_screen <- function(animate = TRUE, sound = TRUE) { 
+help_screen <- function(def, animate = TRUE, sound = TRUE) { 
   
   str <- paste0(
-    paste(rep("\U1F480", 20), collapse = ""), "\n",
+    paste(rep(def$sym$enemy, 20), collapse = ""), "\n",
     "You are an alien lost in a graveyard and  \n", 
     "have until midnight to find your way to   \n", 
     "your ship. Skeletons are waiting to scare \n",
@@ -144,7 +144,7 @@ help_screen <- function(animate = TRUE, sound = TRUE) {
     "them away. And do not fall down the holes.\n", 
     "Move [N]orth, [S]outh, [E]ast or [W]est. \n",
     "See if you can escape (in 60 moves)!\n",
-    paste(rep("\U1F480", 20), collapse = ""), "\n"
+    paste(rep(def$sym$enemy, 20), collapse = ""), "\n"
   )
   
   clear_screen(animate)
@@ -173,34 +173,34 @@ refresh_screen <- function(A, def = def, animate = animate) {
     str <- substr(v, (i - 1) * 20 + 1, (i - 1) * 20 + 20)
     str_chr <- vector()
     for (ii in 1:20) {
-      if (substr(str, ii, ii) == def$chr$alien) { str_chr <- c(str_chr, def$sym$alien) }
-      if (substr(str, ii, ii) == def$chr$grave) { str_chr <- c(str_chr, def$sym$grave) }
-      if (substr(str, ii, ii) == def$chr$hole)  { str_chr <- c(str_chr, def$sym$hole) }
-      if (substr(str, ii, ii) == def$chr$wall)  { str_chr <- c(str_chr, def$sym$wall) }
-      if (substr(str, ii, ii) == def$chr$enemy) { str_chr <- c(str_chr, def$sym$enemy) }
-      if (substr(str, ii, ii) == def$chr$space) { str_chr <- c(str_chr, def$sym$space) }
-      if (substr(str, ii, ii) == def$chr$ship)  { str_chr <- c(str_chr, def$sym$ship) }
-      if (substr(str, ii, ii) == def$chr$owl)   { str_chr <- c(str_chr, def$sym$owl) }
+      if      (substr(str, ii, ii) == def$chr$wall)  { str_chr <- c(str_chr, def$sym$wall) }
+      else if (substr(str, ii, ii) == def$chr$space) { str_chr <- c(str_chr, def$sym$space) }
+      else if (substr(str, ii, ii) == def$chr$alien) { str_chr <- c(str_chr, def$sym$alien) }
+      else if (substr(str, ii, ii) == def$chr$grave) { str_chr <- c(str_chr, def$sym$grave) }
+      else if (substr(str, ii, ii) == def$chr$hole)  { str_chr <- c(str_chr, def$sym$hole) }
+      else if (substr(str, ii, ii) == def$chr$enemy) { str_chr <- c(str_chr, def$sym$enemy) }
+      else if (substr(str, ii, ii) == def$chr$ship)  { str_chr <- c(str_chr, def$sym$ship) }
+      else if (substr(str, ii, ii) == def$chr$owl)   { str_chr <- c(str_chr, def$sym$owl) }
     }
     cat(paste0(str_chr, collapse = ""), "\n")
   }
   
 }
 
-fly_ufo <- function(A, def, animate)  {
+fly_ufo <- function(A, def, animate = TRUE)  {
   
   ## Alien enters ufo
   A[9,19] <- " "
   refresh_screen(A, def, animate)
-  Sys.sleep(0.7)
+  Sys.sleep(0.2)
   
   ## Alien flies away
   for(i in 1:9)  {
     
-    A[10-i, 20] <- ":"  
-    A[10-i-1, 20] <- ">"
+    A[10-i, 20] <- def$chr$wall  # ":"  
+    A[10-i-1, 20] <- def$chr$ship # ">"
     refresh_screen(A, def, animate)
-    Sys.sleep(0.5)
+    Sys.sleep(0.2)
   }
   
 }
@@ -210,7 +210,7 @@ run <- function(animate = TRUE, sound = TRUE) {
   def <- def_character()
   
   inp <- start_screen(def, animate, sound)
-  if (inp == "H") { help_screen(animate, sound) }
+  if (inp == "H") { help_screen(def, animate, sound) }
   
   A <- matrix(ncol = 20, nrow = 10)
   A[, ] <- " "
@@ -220,32 +220,32 @@ run <- function(animate = TRUE, sound = TRUE) {
   X <- 5 # Remaining holes
   death <- 0 # Game over?
   
-  ## define symbols
-  Y <- "*"  # alien
-  B <- "+"  # grave
-  C <- "O"  # hole
-  D <- ":"  # wall
-  E <- "X"  # enemy
-  Z <- " "  # space
-  R <- ">"  # rocket
+  # ## define symbols
+  # Y <- "*"  # alien
+  # B <- "+"  # grave
+  # C <- "O"  # hole
+  # D <- ":"  # wall
+  # E <- "X"  # enemy
+  # Z <- " "  # space
+  # R <- ">"  # rocket
   
   ## Draw board
   ## Add borders
-  A[c(1, 10), ] <- D  # top & bottom wall
-  A[, 1] <- D         # left wall
-  A[1:8, 20] <- D     # right wall
-  A[9, 20] <- R       # rocket
+  A[c(1, 10), ] <- def$chr$wall  # top & bottom wall
+  A[, 1] <- def$chr$wall         # left wall
+  A[1:8, 20] <- def$chr$wall     # right wall
+  A[9, 20] <- def$chr$ship       # rocket/ship
   
   ## Add graves
   for (i in 1:20){
-    A[floor(runif(1) * 7 + 2), floor(runif(1) * 15 + 3)] <- B
+    A[floor(runif(1) * 7 + 2), floor(runif(1) * 15 + 3)] <- def$chr$grave
   }
   
   ## Starting positions
   ## Player
   M <- 2
   N <- 2
-  A[N, M] <- Y
+  A[N, M] <- def$chr$alien
   ## Skeletons
   S <- c(4, 19, 3, 19, 2, 19)
   last_command <- ""
@@ -292,16 +292,16 @@ run <- function(animate = TRUE, sound = TRUE) {
     }
     
     ## Collision detection
-    if (A[T, U] == D | A[T, U] == B) { # Edge or grave
+    if (A[T, U] == def$chr$wall | A[T, U] == def$chr$grave) { # Edge or grave
       
       cat("That way's blocked\n")
       play_sound(10, sound)
       Sys.sleep(1)
-    } else if (A[T, U] == C) { # Hole
+    } else if (A[T, U] == def$chr$hole) { # Hole
       play_sound(9, sound)
       cat("You've fallen into the hole\n")
       break
-    } else if (A[T, U] == E) { # Skeleton
+    } else if (A[T, U] == def$chr$enemy) { # Skeleton/Enemy
       death <- 1
     } else if (T == 9 & U == 20) { # Escaped
       play_sound(3, sound)
@@ -316,41 +316,41 @@ run <- function(animate = TRUE, sound = TRUE) {
       play_sound(9, sound)
       cat("You've been scared to death by a skeleton\n")
       break
-    } else if (A[T, U] == Z) { # Player can move
+    } else if (A[T, U] == def$chr$space) { # Player can move
       ## Move player and dig hole
-      A [N, M] <- Z
+      A [N, M] <- def$chr$space
       if (X != 0) {
         B1 <- toupper(readline("Dig a hole [Y] or [N] : (Enter = N) "))
         if (B1 == "Y") {
           X <- X - 1
-          A[N, M] <- C
+          A[N, M] <- def$chr$hole
         }
       }
       N <- T
       M <- U
-      A[T, U] <- Y
+      A[T, U] <- def$chr$alien
       ## Move skeletons
       for (J in seq(1, 5, by = 2)) {
         ## Store skeleton position in temp variable
         P <- S[J]
         Q <- S[J + 1]
-        if (any(c(A[P + 1, Q], A[P - 1 , Q], A[P, Q - 1], A[P, Q + 1]) == Y)) {
+        if (any(c(A[P + 1, Q], A[P - 1 , Q], A[P, Q - 1], A[P, Q + 1]) == def$chr$alien)) {
           death <- 1
         } else
         {
           ## Move skeletons
-          if (A1 == "S" & A[P + 1, Q] == Z){
+          if (A1 == "S" & A[P + 1, Q] == def$chr$space){
             S[J] <- S[J] + 1 # Follow player
-            A[P, Q] <- Z
-          } else if (A1 == "N" & A[P - 1, Q] == Z){
+            A[P, Q] <- def$chr$space
+          } else if (A1 == "N" & A[P - 1, Q] == def$chr$space){
             S[J] <- S[J] - 1 # Follow player
-            A[P, Q] <- Z
-          } else if (A1 == "E" & A[P, Q - 1] == Z & M < Q){
+            A[P, Q] <- def$chr$space
+          } else if (A1 == "E" & A[P, Q - 1] == def$chr$space & M < Q){
             S[J + 1] <- S[J + 1] - 1 # Move towards player
-            A[P, Q] <- Z
-          } else if (A1 == "E" & A[P, Q + 1] == Z & M > Q) {
+            A[P, Q] <- def$chr$space
+          } else if (A1 == "E" & A[P, Q + 1] == def$chr$space & M > Q) {
             S[J + 1] <- S[J + 1] + 1 # Reverse direction
-            A[P, Q] <- Z
+            A[P, Q] <- def$chr$space
           }
         }
       }
