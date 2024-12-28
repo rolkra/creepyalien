@@ -15,6 +15,7 @@
 ## cat("\UE0020")  ## space
 ## cat("\UE002E")  ## space
 
+## Inspired by:
 ## Creepy Computer Games
 ## Reynold, Colin and McCaig, Rob, Creepy Computer Games (Usborne, London).
 ## https://archive.org/details/Creepy_Computer_Games_1983_Usborne_Publishing/
@@ -111,7 +112,7 @@ start_screen <- function(def, animate = TRUE, sound = TRUE) {
 
   inp <- readline("[S]tart | [H]elp | [Q]uit : ")
   inp <- toupper(inp)
-  if (inp == "Q") { stop_quietly() }
+  # if (inp == "Q") { stop_quietly() }
   inp
 }
 
@@ -134,7 +135,7 @@ help_screen <- function(def, animate = TRUE, sound = TRUE) {
   cat(cli::col_red(str))     ## show intro
   inp <- readline("Press <ENTER> to start :")
   inp <- toupper(inp)
-  if (inp == "Q") { stop_quietly() }
+  # if (inp == "Q") { stop_quietly() }
   inp
 }
 
@@ -188,12 +189,28 @@ fly_ufo <- function(A, def, animate = TRUE)  {
   
 }
 
-run <- function(animate = TRUE, sound = TRUE) {
+#' Play creepyalien in the R-console
+#'
+#' @param animate Animated CLI graphics? (TRUE|FALSE)
+#' @param sound Play sound? (TRUE|FALSE)
+#' @return Nothing  
+#' @export
+#' @examples
+#' ## Start game (in interactive R sessions)
+#' if (interactive())  {
+#'    creepyalien()
+#' }
+creepyalien <- function(animate = TRUE, sound = TRUE) {
   
   def <- def_character()
   
   inp <- start_screen(def, animate, sound)
-  if (inp == "H") { help_screen(def, animate, sound) }
+  if (inp == "Q") { return("You Quit!") }
+  
+  if (inp == "H") { 
+    inp <- help_screen(def, animate, sound) 
+    if (inp == "Q") { return("You Quit!") }
+  }
   
   A <- matrix(ncol = 20, nrow = 10)
   A[, ] <- " "
@@ -224,6 +241,9 @@ run <- function(animate = TRUE, sound = TRUE) {
     A[floor(runif(1) * 7 + 2), floor(runif(1) * 15 + 3)] <- def$chr$grave
   }
   
+  ## Add owl
+  A[5,10] <- def$chr$owl
+  
   ## Starting positions
   ## Player
   M <- 2
@@ -239,7 +259,7 @@ run <- function(animate = TRUE, sound = TRUE) {
   repeat{    
     ## Position skeletons
     for (J in seq(1, 5, by = 2)) {
-      A[S[J], S[J + 1]] <- E
+      A[S[J], S[J + 1]] <- def$chr$enemy
     }
     W <- W + 1 ## Move counter
     if (W > 60) {
@@ -252,6 +272,7 @@ run <- function(animate = TRUE, sound = TRUE) {
     
     ## Enter move
     A1 <- toupper(readline(paste0("Moves ", 60-W+1, ": Go [N],[S],[E],[W] or [Q]uit: ")))
+    if (A1 == "Q") { return("You Quit!") }
     if (A1 == "") { 
       A1 <- last_command
     } else {
@@ -299,11 +320,21 @@ run <- function(animate = TRUE, sound = TRUE) {
       play_sound(9, sound)
       cat("You've been scared to death by a skeleton\n")
       break
+    } else if (A[T, U] == def$chr$owl) { # Owl
+      A [N, M] <- def$chr$space
+      N <- T
+      M <- U
+      A[T, U] <- def$chr$alien
+      play_sound(2, sound)
+      cat("You get extra time!")
+      Sys.sleep(1)
+      W <- 0  # reset to 0 moves
     } else if (A[T, U] == def$chr$space) { # Player can move
       ## Move player and dig hole
       A [N, M] <- def$chr$space
       if (X != 0) {
         B1 <- toupper(readline("Dig a hole [Y] or [N] : (Enter = N) "))
+        if (B1 == "Q") { return("You Quit!") }
         if (B1 == "Y") {
           X <- X - 1
           A[N, M] <- def$chr$hole
@@ -334,10 +365,28 @@ run <- function(animate = TRUE, sound = TRUE) {
           } else if (A1 == "E" & A[P, Q + 1] == def$chr$space & M > Q) {
             S[J + 1] <- S[J + 1] + 1 # Reverse direction
             A[P, Q] <- def$chr$space
-          }
-        }
-      }
-    }
-  }
+          } # move skeleton
+        }   # move skeleton
+      } # for
+    } # player can ove
+  } # repeat
   
-} ## run
+} #
+
+# run
+
+#' Play creepyalien in the R-console
+#'
+#' @param animate Animated CLI graphics? (TRUE|FALSE)
+#' @param sound Play sound? (TRUE|FALSE)
+#' @return Nothing  
+#' @export
+#' @examples
+#' ## Start game (in interactive R sessions)
+#' if (interactive())  {
+#'    creepyalien()
+#' }
+
+run <- function(animate = TRUE, sound = TRUE) {
+  creepyalien(animate = animate, sound = sound) 
+}
