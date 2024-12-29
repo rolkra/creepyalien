@@ -17,7 +17,6 @@ clear_screen <- function(animate = TRUE) {
 }
 
 play_sound <- function(nr, sound = TRUE)  {
-  
   if (sound) {
      beepr::beep(sound = nr)
   }
@@ -49,6 +48,7 @@ def_character <- function() {
     owl   = "\U1F989"
   )
   
+  ## return as list
   def <- list(chr = chr, sym = sym)
   def
   
@@ -56,6 +56,7 @@ def_character <- function() {
 
 start_screen <- function(def, animate = TRUE, sound = TRUE) { 
   
+  ## define start screen
   str <- paste0(
     paste(rep(def$sym$enemy, 20), collapse = ""), "\n",
     "\n",
@@ -70,6 +71,7 @@ start_screen <- function(def, animate = TRUE, sound = TRUE) {
     "\n"
   )
   
+  ## if animate, let ufo fly in from left side
   if (animate) {
     alien <- "  "
     for (i in 0:22) {
@@ -84,6 +86,8 @@ start_screen <- function(def, animate = TRUE, sound = TRUE) {
     cat(glue::glue(str))     ## show intro
     Sys.sleep(1)
   }
+  
+  ## show start screen (including alien & ufo)
   play_sound(5, sound)
   clear_screen(animate)
   ship <- paste(rep(" ", 22), collapse = "")
@@ -91,14 +95,17 @@ start_screen <- function(def, animate = TRUE, sound = TRUE) {
   alien <- def$sym$alien
   cat(cli::col_red(glue::glue(str)))     ## show intro
 
+  ## user input
   inp <- readline("[S]tart | [H]elp | [Q]uit : ")
   inp <- toupper(inp)
 
+  ## return user input (upper case)
   inp
 }
 
 help_screen <- function(def, animate = TRUE, sound = TRUE) { 
   
+  ## define help screen
   str <- paste0(
     paste(rep(def$sym$enemy, 20), collapse = ""), "\n",
     "You are an alien lost in a graveyard and  \n", 
@@ -112,11 +119,15 @@ help_screen <- function(def, animate = TRUE, sound = TRUE) {
     paste(rep(def$sym$enemy, 20), collapse = ""), "\n"
   )
   
+  ## show help screen
   clear_screen(animate)
   cat(cli::col_red(str))     ## show intro
+  
+  ## get user input
   inp <- readline("Press <ENTER> to start :")
   inp <- toupper(inp)
 
+  # return user input (upper case)
   inp
 }
 
@@ -150,7 +161,7 @@ refresh_screen <- function(A, def = def, animate = animate) {
     cat(paste0(str_chr, collapse = ""), "\n")
   }
   
-}
+} # refresh_screen
 
 fly_ufo <- function(A, def, animate = TRUE)  {
   
@@ -168,7 +179,7 @@ fly_ufo <- function(A, def, animate = TRUE)  {
     Sys.sleep(0.2)
   }
   
-}
+} # fly_ufo
 
 #' Play creepyalien in the R-console
 #'
