@@ -321,8 +321,7 @@ creepyalien <- function(animate = TRUE, sound = TRUE) {
       M <- U
       A[T, U] <- def$chr$alien
       play_sound(2, sound)
-      cat("You get extra time!")
-      Sys.sleep(1)
+      readline("You get extra time: press <ENTER> ")
       W <- 0  # reset to 0 moves
     } else if (A[T, U] == def$chr$space) { # Player can move
       ## Move player and ask if dig hole
