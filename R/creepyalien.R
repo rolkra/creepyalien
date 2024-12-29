@@ -288,6 +288,16 @@ creepyalien <- function(animate = TRUE, sound = TRUE) {
       Sys.sleep(1)
     } else if (A[T, U] == def$chr$hole) { # Hole
       play_sound(9, sound)
+      A[N, M] <- def$chr$space
+      A[T, U] <- def$chr$hole
+      if (animate) {
+        Sys.sleep(0.5)
+        A[T, U] <- def$chr$alien
+        refresh_screen(A, def, animate)
+        Sys.sleep(0.5)
+        A[T, U] <- def$chr$hole
+      }
+      refresh_screen(A, def, animate)
       cat("You've fallen into the hole\n")
       break
     } else if (A[T, U] == def$chr$enemy) { # Skeleton/Enemy
