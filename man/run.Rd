@@ -20,6 +20,6 @@ Play creepyalien in the R-console
 \examples{
 ## Start game (in interactive R sessions)
 if (interactive())  {
-   creepyalien()
+   run()
 }
 }

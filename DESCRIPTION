@@ -15,6 +15,6 @@ Description: Puzzle game that can be played in the R console.
 License: GPL-3
 Encoding: UTF-8
 URL: https://github.com/rolkra/creepyalien
-Imports: beepr, cli, glue
+Imports: beepr, cli, glue, stats
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2

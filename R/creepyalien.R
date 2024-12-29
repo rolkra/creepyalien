@@ -233,7 +233,7 @@ creepyalien <- function(animate = TRUE, sound = TRUE) {
   
   ## Add graves
   for (i in 1:20){
-    A[floor(runif(1) * 7 + 2), floor(runif(1) * 15 + 3)] <- def$chr$grave
+    A[floor(stats::runif(1) * 7 + 2), floor(stats::runif(1) * 15 + 3)] <- def$chr$grave
   }
   
   ## Add owl
