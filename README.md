@@ -40,14 +40,14 @@ Move the alien:
 
 # History 
 
-The gameplay is inspired by 'Gravedigger', written 1983 in BASIC by Alan Ramsey for classic homecomputers like ZX81, ZXSpectrum and Commodore VIC20. The listing of 'Gravedigger' was published in the book 'CREEPY COMPUTER GAMES' which is still digital available on the Internet Archive: 
+The gameplay is inspired by 'Gravedigger', written 1983 in BASIC by Alan Ramsey for classic home computers like ZX81, ZXSpectrum and Commodore VIC20. The listing of 'Gravedigger' was published in the book 'CREEPY COMPUTER GAMES' which is still digital available on the Internet Archive: 
 <https://archive.org/details/Creepy_Computer_Games_1983_Usborne_Publishing>
 
 <img src="man/figures/gravedigger-original.png" alt="gameplay gravedigger" width="200">
 
-The game was ported 2018 to R by Peter Pevros, keeping the code as close as possible to the original.
+The game was ported 2018 to R by Peter Prevos, keeping the code as close as possible to the original.
 
-In 2025 I decided to add some extra spice to the R code by changing the text-characters to UTF8-characters (e.g. 💀 instead of X), adding sound and adding some litte animations. Furthermore, I decided to extend the storyline by introducing the alien 👽 that is looking for the ship 🛸. As you may experience, the game can be quite challenging in the beginning, therefore I added the owl 🦉 to get some extra moves.
+In 2025 I decided to add some extra spice to the R code by changing the text-characters to UTF8-characters (e.g. 💀 instead of X), adding sound and some little animations. Furthermore, I decided to extend the story line by introducing the alien 👽 that is looking for the ship 🛸. As the game can be quite challenging, I added the owl 🦉 to get some extra moves.
 
 Enjoy the game!
 

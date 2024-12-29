@@ -1,25 +1,6 @@
-## cat("\U1F480")  ## 💀
-## cat("\U1F47D")  ## 👽
-## cat("\U1F680")  ## 🚀
-## cat("\U1F6F8")  ## 🛸
-## cat("\U1F47B")  ## 👻
-## cat("\U1F477")  ## 👷 
-## cat("\U1F546")  ## 🕆
-## cat("\U1F9D1")  ## 🧑
-## cat("\U1F383")  ## 🎃
-## cat("\U1F571")  ## 🕱
-## cat("\U1F989")  ## 🦉
-## cat("\U1F333")  ## 🌳
-## cat("\U1F332")  ## 🌲
-## cat("\U1F7E4")  ## 🟤
-## cat("\UE0020")  ## space
-## cat("\UE002E")  ## space
-
-## Inspired by:
-## Creepy Computer Games
-## Reynold, Colin and McCaig, Rob, Creepy Computer Games (Usborne, London).
+## Inspired by Gravedigger (written by Alan Ramsey)
+## Listing published 1983 in 'Creepy Computer Games'
 ## https://archive.org/details/Creepy_Computer_Games_1983_Usborne_Publishing/
-## Gravedigger by Alan Ramsey
 
 stop_quietly <- function() {
   opt <- options(show.error.messages = FALSE)
@@ -58,7 +39,7 @@ def_character <- function() {
   
   ## define screen symbol
   sym <- list(
-    alien = "\U1F47D",  # chr_Y "*"  # "\U1F477" 
+    alien = "\U1F47D",  # chr_Y "*"  
     grave = "_+",       # chr_B "+"
     hole  = "()",       # chr_C "O" 
     wall  = "::",       # chr_D ":"
@@ -112,7 +93,7 @@ start_screen <- function(def, animate = TRUE, sound = TRUE) {
 
   inp <- readline("[S]tart | [H]elp | [Q]uit : ")
   inp <- toupper(inp)
-  # if (inp == "Q") { stop_quietly() }
+
   inp
 }
 
@@ -135,7 +116,7 @@ help_screen <- function(def, animate = TRUE, sound = TRUE) {
   cat(cli::col_red(str))     ## show intro
   inp <- readline("Press <ENTER> to start :")
   inp <- toupper(inp)
-  # if (inp == "Q") { stop_quietly() }
+
   inp
 }
 
@@ -202,8 +183,10 @@ fly_ufo <- function(A, def, animate = TRUE)  {
 #' }
 creepyalien <- function(animate = TRUE, sound = TRUE) {
   
+  ## define characters used in game
   def <- def_character()
   
+  ## start & help screen
   inp <- start_screen(def, animate, sound)
   if (inp == "Q") { return("You Quit!") }
   
@@ -212,13 +195,14 @@ creepyalien <- function(animate = TRUE, sound = TRUE) {
     if (inp == "Q") { return("You Quit!") }
   }
   
+  ## define game screen (20 x 10)
   A <- matrix(ncol = 20, nrow = 10)
   A[, ] <- " "
   
   ## Starting variables
-  W <- 0 # Move number
-  X <- 5 # Remaining holes
-  death <- 0 # Game over?
+  W <- 0       # Move number
+  X <- 5       # Remaining holes
+  death <- 0   # Game over?
   
   # ## define symbols
   # Y <- "*"  # alien
@@ -268,6 +252,7 @@ creepyalien <- function(animate = TRUE, sound = TRUE) {
       break
     }
     
+    ## Draw game screen
     refresh_screen(A, def, animate)
     
     ## Enter move
@@ -279,19 +264,19 @@ creepyalien <- function(animate = TRUE, sound = TRUE) {
       last_command <- A1
     }
     ## Move player
-    T <- N
-    U <- M
+    T <- N   ## N = old x position, T = new x position 
+    U <- M   ## M = old y position, U = new y position
     
     if (A1 == "EXIT" | A1 == "QUIT" | A1 == "Q") {
       break
     }
-    if (A1 == "N") {
+    if (A1 == "N" | A1 == "NORD") {
       T <- N - 1
-    } else if (A1 == "E") {
+    } else if (A1 == "E"| A1 == "EAST") {
       U <- M + 1
-    } else if (A1 == "S") {
+    } else if (A1 == "S"| A1 == "SOUTH") {
       T <- N + 1
-    } else if (A1 == "W") {
+    } else if (A1 == "W"| A1 == "WEST") {
       U <- M - 1
     }
     
@@ -330,7 +315,7 @@ creepyalien <- function(animate = TRUE, sound = TRUE) {
       Sys.sleep(1)
       W <- 0  # reset to 0 moves
     } else if (A[T, U] == def$chr$space) { # Player can move
-      ## Move player and dig hole
+      ## Move player and ask if dig hole
       A [N, M] <- def$chr$space
       if (X != 0) {
         B1 <- toupper(readline("Dig a hole [Y] or [N] : (Enter = N) "))
@@ -368,7 +353,7 @@ creepyalien <- function(animate = TRUE, sound = TRUE) {
           } # move skeleton
         }   # move skeleton
       } # for
-    } # player can ove
+    } # player can move
   } # repeat
   
 } #

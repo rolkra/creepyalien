@@ -1,11 +1,15 @@
 Package: creepyalien
 Title: Puzzle Game for the R Console
 Version: 1.0.0
-Authors@R: 
+Authors@R: c(
     person(given = "Roland",
            family = "Krasser",
            role = c("aut", "cre"),
-           email = "roland.krasser@gmail.com")
+           email = "roland.krasser@gmail.com"),
+    person(given = "Peter",
+           family = "Prevos",
+           role = "aut")
+           )
 Description: Puzzle game that can be played in the R console.
   Help the alien to find the ship.
 License: GPL-3

@@ -17,5 +17,10 @@ Useful links:
 \author{
 \strong{Maintainer}: Roland Krasser \email{roland.krasser@gmail.com}
 
+Authors:
+\itemize{
+  \item Peter Prevos
+}
+
 }
 \keyword{internal}
