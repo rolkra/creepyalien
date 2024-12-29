@@ -389,7 +389,7 @@ creepyalien <- function(animate = TRUE, sound = TRUE) {
 #' @examples
 #' ## Start game (in interactive R sessions)
 #' if (interactive())  {
-#'    creepyalien()
+#'    run()
 #' }
 
 run <- function(animate = TRUE, sound = TRUE) {
